@@ -1,0 +1,103 @@
+---
+title: "Ciência de Dados no Esporte – Seminário Tópicos em Computação 4"
+description: "Panorama de como analytics transformou beisebol, basquete e futebol, com ênfase na métrica Expected Goals (xG)"
+date: 2025-05-05
+cover: "seminar-cover.png"     # use um print do slide principal ou heat-map de xG
+tags:
+  - Data Science
+  - Sports Analytics
+  - Baseball
+  - Basketball
+  - Football
+  - Expected Goals
+  - Machine Learning
+---
+
+> Seminário apresentado na disciplina **Tópicos em Computação 4**, cujo objetivo é expor temas de computação que não aparecem nas grades tradicionais. Aqui exploramos **Ciência de Dados no Esporte**, mostrando como métodos estatísticos e modelos de machine learning mudaram decisões táticas, recrutamento e treinamento em três modalidades.
+
+## 🗂️ Roteiro do Seminário
+
+| Timecode | Tema |
+|----------|------|
+| 00:00:00 | Introdução – por que dados importam no esporte moderno |
+| 00:06:18 | **Beisebol**: *Moneyball* e a ascensão do sabermetrics |
+| 00:14:35 | **Basquete**: a revolução da linha de 3 pontos |
+| 00:20:12 | Estudo de caso: **Houston Rockets 2016-2020** |
+| 00:30:24 | **Futebol**: evolução do scouting e análise tática |
+| 00:43:20 | xG aplicado – **Barcelona × Benfica (UCL 2021)** |
+| 00:55:33 | Construindo a métrica **Expected Goals** passo a passo |
+| 01:10:42 | Clipes práticos: como clubes usam dashboards em tempo real |
+| 01:15:56 | Questões de concurso & discussões finais |
+
+---
+
+## 1️⃣ Introdução (00:00 – 06:18)
+
+* Contextualização histórica: do “olho de técnico” para decisões orientadas a dados.  
+* Papel da computação: ETL, bancos NoSQL, aprendizado de máquina, visualização.  
+* Motivação acadêmica: ligar estatística, IA e esportes para “problemas do mundo real”.
+
+## 2️⃣ Beisebol e o **Moneyball** (06:18 – 14:35)
+
+* *On-base percentage* e *slugging* substituindo métricas tradicionais como RBI.  
+* Caso **Oakland A’s** (2002): elenco barato, 20 vitórias seguidas.  
+* Impacto na contratação: mercado de talentos precificado por stat-value.
+
+## 3️⃣ Basquete – a Revolução da Linha de 3 Pontos (14:35 – 20:12)
+
+* Análise de eficiência de arremessos (eFG%) → migração para 3 pontos e bandejas.  
+* Gráfico de “zonas quentes” do **Stephen Curry** ilustrando mudança tática.  
+* Efeito cascata na liga: média de tentativas de 3 pts subiu 350 % de 2000 a 2023.
+
+## 4️⃣ Estudo de Caso: **Houston Rockets** (20:12 – 30:24)
+
+* General Manager **Daryl Morey** (formação em comp. aplicada).  
+* Modelo de shot-selection: > 50 % dos arremessos de 3 pts (temporada 2018).  
+* Resultado: temporadas consecutivas de 60+ vitórias e recorde de tentativas de 3.
+
+## 5️⃣ Futebol – Do Scout Tradicional ao Big Data (30:24 – 43:20)
+
+* Tracking por GPS e câmeras de 25 Hz (Opta, StatsBomb, TRACAB).  
+* Métricas modernas: **xG**, **xA**, **packing**, intensidade de pressão (*PPDA*).  
+* Uso em categorias de base: descoberta de talentos por clusters de estilo de jogo.
+
+## 6️⃣ Análise xG: **Barcelona × Benfica** (UCL 2021) (43:20 – 55:33)
+
+* Distribuição de finalizações: Barça domina posse, mas xG equilibrado (2,1 vs 1,8).  
+* Clip no 87’ – salvamento de Ter Stegen muda probabilidade preditiva do empate.  
+* Discussão: “posse ≠ qualidade de chance”.
+
+## 7️⃣ Construindo a métrica **Expected Goals** (55:33 – 1:10:42)
+
+1. **Dataset**: 40 k chutes da Premier League (2013-2018).  
+2. **Features**: distância, ângulo, tipo de passe, situação (contra-ataque, bola parada).  
+3. **Modelo**: *Gradient Boosting* (AUC ≈ 0,79; Brier ≈ 0,22).  
+4. **Calibração** e validação cruzada estratificada.  
+5. Deploy via API Flask + Docker → dashboards em tempo real no banco de reservas.
+
+## 8️⃣ Clipes Práticos (1:10:42 – 1:15:56)
+
+* Demo de dashboard do **Liverpool FC** (xG em tempo real).  
+* VR training: goleiros com óculos Quest analisando padrões de pênalti.  
+* Comparativo antes/depois de planos de treino baseados em carga interna (TRIMP).
+
+## 9️⃣ Questões de Concurso (1:15:56 – 1:20:00)
+
+* Diferença entre regressão logística e árvore de decisão para xG.  
+* Interpretação de curva ROC em métricas esportivas.  
+* Conceito de overfitting em séries temporais de desempenho atlético.
+
+---
+
+## ✨ Conclusões
+
+* Dados transformam decisões táticas e de mercado; ignorá-los gera desvantagem competitiva.  
+* Métodos de IA não substituem olheiro ou técnico, mas potencializam insights.  
+* Há vasto espaço para pesquisa (Vision Transformers, causal inference em lesões, RL para estratégia).
+
+## 📚 Referências
+
+* Lewis, M. “**Moneyball**”, 2003.  
+* Cervone, D. et al. “A Multiresolution Stochastic Process Model for Basketball Possession”, *J. Amer. Stat. Assoc.*, 2016.  
+* Spearman, W. “Beyond Expected Goals”, *MIT SSAC*, 2018.  
+* Brooks, J. et al. “Measuring Expected Possession Value in Soccer”, *JQAS*, 2021.
