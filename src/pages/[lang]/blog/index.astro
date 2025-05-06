@@ -1,0 +1,81 @@
+---
+import { LOCALES, useTranslations, type Lang } from "@/i18n";
+import Layout from "@/layouts/Base.astro";
+// import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import PageHeadline from "@/components/PageHeadline.astro";
+
+import Card from "@/components/card/VerticalCard.astro";
+
+const locale = Astro.currentLocale as Lang;
+const t = useTranslations(locale);
+
+const posts = (await getCollection("blog"))
+  .filter((post) => post.slug.split("/")[0] === locale)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const title = t({
+  en: "Projects",
+  pt: "Projetos",
+});
+
+export const getStaticPaths = () =>
+  Object.keys(LOCALES).map((lang) => ({
+    params: { lang },
+  }));
+---
+
+<Layout {title}>
+  <PageHeadline {title} />
+
+  <div>
+    <p>
+      {
+        t({
+          en: "Some projects that I developed over time. I participated or developed many other projects that are not listed here, some others are available on my",
+          pt: "Alguns projetos que desenvolvi ao longo do tempo. Participei ou desenvolvi muitos outros projetos que não estão listados aqui, alguns outros estão no meu",
+        })
+      }
+      
+      <a href="https://github.com/sendaspaulo">GitHub</a>
+    </p>
+
+  </div>
+
+  <ul>
+    {
+      posts.map((post) => {
+        const [, ...slug] = post.slug.split("/");
+        return (
+          <Card
+            title={post.data.title}
+            img={post.data.cover}
+            desc={post.data.description}
+            href={`/${locale}/blog/${slug.join("/")}/`}
+            date={post.data.date}
+            tags={post.data.tags}
+          />
+        );
+      })
+    }
+  </ul>
+</Layout>
+
+<style>
+  p {
+    margin-block-start: var(--sp-s);
+  }
+  ul {
+    margin-block-start: var(--sp-m);
+    display: grid;
+    gap: var(--sp-s);
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  }
+
+  li {
+    margin-block-end: 1rem;
+    img {
+      border-radius: 6px;
+    }
+  }
+</style>

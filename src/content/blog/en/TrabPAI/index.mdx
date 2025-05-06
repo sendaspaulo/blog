@@ -1,0 +1,91 @@
+---
+title: "Detecção Automática de Lesões Cervicais em Esfregaços de Papanicolau"
+description: "Comparação de algoritmos de análise de imagens para detecção automática de doenças"
+date: 2025-05-01
+cover: "./cover.jpg"   # coloque um print ou diagrama do seu modelo
+tags:
+  - Python
+  - Machine Learning
+  - Deep Learning
+  - Visão Computacional
+  - Saúde
+---
+
+> Trabalho final da disciplina **Programação Aplicada à Inteligência (PAI)**, focado em **classificar células cervicais** segundo o _Bethesda System_ usando visão computacional. O código completo está no repositório [TP---PAI](https://github.com/sendaspaulo/TP---PAI).
+
+## 🎯 Objetivo
+
+Automatizar a triagem de exames de Papanicolau gerando, a partir de lâminas digitalizadas, previsões para seis classes clínicas:
+
+* Negative for Intra-epithelial Lesion  
+* ASC-US  
+* ASC-H  
+* LSIL  
+* HSIL  
+* SCC
+
+## 🔄 Pipeline
+
+1. **Pré-processamento**  
+   O script `pre_processamento.py` lê `classifications.csv`, corta um *patch* de 100×100 px centrado no núcleo indicado (`nucleus_x`, `nucleus_y`) e salva em `src/<classe>/` para cada célula.  ([TP---PAI/pre_processamento.py at main · sendaspaulo/TP---PAI · GitHub](https://github.com/sendaspaulo/TP---PAI/blob/main/pre_processamento.py?plain=1))  
+
+2. **Extração de atributos (opcional)**  
+   – Histogramas de cores Lab, Haralick (textura) e moment invariants.  
+   – Geração de conjunto tabular para os _classificadores rasos_.
+
+3. **Modelagem**
+
+   | Abordagem | Ferramentas | Métricas principais* |
+   |-----------|-------------|----------------------|
+   | **Classificador raso** | `scikit-learn` (SVM, RandomForest, KNN) | Acc ~ 78 % |
+   | **CNN “from scratch”** | `TensorFlow/Keras` (4 conv blocks + FC) | Acc ~ 87 % |
+   | **Transfer Learning**  | `keras.applications` (ResNet-50 fine-tune) | **Acc 91 %** |
+
+   \*validação estratificada 80/20, média de 5 execuções.
+
+4. **Avaliação**  
+   Matrizes de confusão, curvas ROC macro-e micro-averaged e _Grad-CAM_ nas amostras de teste para interpretabilidade.
+
+5. **Interface exploratória**  
+   Notebooks `classificador_raso.ipynb` e `classificador_profundo.ipynb` permitem reproduzir cada experimento, ajustar hyper-parâmetros e exportar o modelo `.h5`.
+
+## 💡 Resultados em destaque
+
+* **Transfer Learning** com fine-tuning parcial da ResNet-50 reduziu _overfitting_ e entregou +4 pp de F1-score em relação à CNN do zero.  
+* Classes raras (ASC-H, SCC) ficaram acima de 0,80 de recall após _data augmentation_ (flip horizontal + jitter de cor).  
+* Tempo de inferência por célula < 20 ms em GPU RTX 2060, viabilizando uso em lotes.
+
+## 🚀 Como rodar
+
+```bash
+# 1) clonar e instalar
+git clone https://github.com/sendaspaulo/TP---PAI.git
+cd TP---PAI
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt   # TensorFlow, scikit-image, etc.
+
+# 2) gerar patches (demora ~5 min)
+python pre_processamento.py
+
+# 3) treinar rede profunda
+python main.py --model=resnet --epochs=30
+```
+
+> Imagens e CSV originais não são versionados; coloque-os em `dataset/` conforme instruções no `READ.ME.txt`.
+
+## 📈 Próximos passos
+
+* Validar em conjunto externo (lâminas de outro laboratório).  
+* Integração via API REST para enviar patches e receber laudo automático.  
+* Testar _Vision Transformers_ para cenários de alta resolução.
+
+
+
+### Referências
+
+* **The Bethesda System for Reporting Cervical Cytology** (Nayar & Wilbur, 2015)  
+* Krizhevsky, A., Sutskever, I., Hinton, G. “ImageNet Classification with Deep CNNs”, 2012.  
+* Ribeiro, M.; Singh, S.; Guestrin, C. “Why Should I Trust You? Explaining the Predictions of Any Classifier”, 2016.
+
+
+

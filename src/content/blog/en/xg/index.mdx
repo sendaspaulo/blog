@@ -1,0 +1,70 @@
+---
+title: "Expected Goals (xG) em Futebol – Modelagem com Dados StatsBomb"
+description: "Estimativa de probabilidade de gol a partir de eventos de jogo e comparação de modelos de machine learning"
+date: 2025-05-05
+cover: "./xg.png"   # substitua por um print do heat-map de xG ou diagrama do fluxo
+tags:
+  - Python
+  - Machine Learning
+  - Sports Analytics
+  - Football
+  - Data Science
+  - Visão Computacional
+---
+
+> Projeto de **analytics esportivo** desenvolvido para o portfólio pessoal, demonstrando a construção de um modelo de *Expected Goals* com o pacote **statsbombpy** e validação em jogos das cinco grandes ligas europeias (2015-2016). Código completo no repositório [xG-StatsBomb-Analysis](https://github.com/sendaspaulo/xG-StatsBomb-Analysis).
+
+## 🎯 Objetivo
+
+Quantificar a probabilidade de um chute resultar em gol (*xG*) com base em variáveis geométricas e contextuais extraídas dos eventos da StatsBomb, oferecendo um pipeline reprodutível da coleta ao deploy do modelo.
+
+## 🔄 Pipeline
+
+1. **Coleta & Limpeza**  
+   `data_ingest.py` baixa partidas via *statsbombpy*, normaliza colunas, remove eventos sem coordenadas e gera `events.parquet`.
+
+2. **Feature Engineering**  
+   * Distância e ângulo do chute ao centro do gol.  
+   * Situação da jogada (bola rolando, pênalti, falta, cabeceio).  
+   * Posição do goleiro adversário (quando disponível).  
+   * Minuto da partida e diferença de placar.
+
+3. **Modelagem**
+
+   | Modelo | Ferramentas | AUC ROC* | Log-loss* |
+   |--------|-------------|----------|-----------|
+   | **Regressão Logística** | scikit-learn | 0,73 | 0,38 |
+   | **Random Forest** | scikit-learn | 0,79 | 0,34 |
+   | **XGBoost** | xgboost | **0,82** | **0,31** |
+
+   \* validação estratificada 70/30, média de 3 execuções.
+
+4. **Avaliação Visual**  
+   Heat-maps de xG por zona do campo, curvas ROC e *calibration plots* para cada modelo, além de tabelas de importância de variáveis (SHAP).
+
+5. **Exportação & Deploy**  
+   `export_model.py` grava artefato `.json` (XGBoost Booster) e gera endpoint Flask em `app.py`, pronto para uso via REST.
+
+## 💡 Resultados em Destaque
+
+* XGBoost superou modelos lineares em +9 pp de AUC, capturando interações não lineares entre ângulo e distância.  
+* Jogadas de cabeça apresentaram xG 43 % menor, mesmo a curta distância, confirmando estudos prévios sobre dificuldade de cabeceios.  
+* Mapa de calor evidencia “golden zone” retangular (largura da pequena área até o pênalti) com xG > 0,30 por tentativa.
+
+## 🚀 Como Rodar
+
+```bash
+# 1) clonar e instalar dependências
+git clone https://github.com/sendaspaulo/xG
+cd xG-StatsBomb-Analysis
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt   # statsbombpy, xgboost, shap...
+
+# 2) baixar dados e preparar parquet (~2 min)
+python data_ingest.py
+
+# 3) treinar modelo XGBoost
+python train.py --model xgb --epochs 100
+
+# 4) iniciar API de predição
+python app.py        # localhost:5000/predict

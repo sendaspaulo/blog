@@ -1,0 +1,197 @@
+---
+import Layout from "@/layouts/Base.astro";
+import TimeLineElement from "@/components/cv/TimeLine.astro";
+import { LOCALES, useTranslations, type Lang } from "@/i18n";
+
+export const getStaticPaths = () =>
+  Object.keys(LOCALES).map((lang) => ({
+    params: { lang },
+  }));
+
+const t = useTranslations(Astro.currentLocale as Lang);
+---
+
+<Layout title={t({ en: "Resume", pt: "Currículo" })}>
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">
+      {t({ en: "About Me", pt: "Sobre Mim" })}
+    </div>
+  </div>
+
+<div class="mb-10 text-justify">
+  {
+    t({
+      en: `My name is Paulo Henrique, an 8th-semester Computer Science student fascinated by the intersection of analytics, sport, and technology. I started out as a VR game developer during an internship at IMxr—building immersive experiences in Unreal Engine and C++—and soon pivoted inside the same company to the Data & Business-Intelligence team, where I designed ETL pipelines and interactive dashboards. Today I intern at AFFEMG, delivering BI insights and full-stack tools that inform strategic decisions. As a researcher, I belong to Footure’s pioneering Football Data Science cohort and lead personal projects that blend Python-based optimization, machine-learning models, and match-tracking datasets to answer real questions about performance on the pitch.`,
+      pt: `Meu nome é Paulo Henrique, sou estudante do 8º período de Ciência da Computação e apaixonado pela convergência entre dados, esportes e tecnologia. Iniciei minha carreira como desenvolvedor de jogos em VR na IMxr, programando experiências imersivas em Unreal Engine e C++; na própria empresa migrei para a equipe de Dados e BI, onde criei pipelines de ETL e dashboards interativos. Atualmente estagio na AFFEMG, entregando análises de BI e ferramentas full-stack que subsidiam decisões estratégicas. Como pesquisador, integro a turma inaugural de Ciência de Dados no Futebol da Footure e conduzo projetos pessoais que unem otimização em Python, modelos de machine learning e bases de tracking para investigar, de forma prática, o desempenho dentro de campo.`,
+    })
+  }
+</div>
+
+
+
+
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">
+      {t({ en: "Skills", pt: "Habilidades" })}
+    </div>
+  </div>
+
+  <ul class="list-disc md:columns-5 columns-2 mx-6">
+    <li>SQL</li>
+    <li>Java</li>
+    <li>C</li>
+    <li>Python</li>
+    <li>Power BI</li>
+    <li>Google Looker Studio</li>
+  </ul>
+  
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">
+      {t({ en: "Experience", pt: "Experiência" })}
+    </div>
+  </div>
+
+  <div className="time-line-container mb-10">
+  {/* AFFEMG */}
+  <TimeLineElement
+    title={t({
+      en: "Software Development & Data Analysis Intern",
+      pt: "Estagiário de Desenvolvimento de Software e Análise de Dados",
+    })}
+    subtitle={t({
+      en: "From 08/2024 to current at AFFEMG, Belo Horizonte, Brazil",
+      pt: "De 08/2024 até o momento na AFFEMG, Belo Horizonte, Brasil",
+    })}
+  >
+    {t({
+      en: `Develop desktop tools in Delphi to support the association’s
+finance department and build Business Intelligence dashboards
+with Google Looker Studio to visualise KPIs for member engagement.`,
+      pt: `Desenvolvimento de ferramentas desktop em Delphi para dar suporte ao setor
+financeiro da associação e criação de dashboards de Business Intelligence
+com Google Looker Studio para visualizar KPIs de engajamento dos associados.`,
+    })}
+  </TimeLineElement>
+
+  {/* FIEMG */}
+  <TimeLineElement
+    title={t({
+      en: "Data Analytics Intern",
+      pt: "Estagiário de Análise de Dados",
+    })}
+    subtitle={t({
+      en: "From 05/2024 to 08/2024 at FIEMG, Belo Horizonte, Brazil",
+      pt: "De 05/2024 a 08/2024 na FIEMG, Belo Horizonte, Brasil",
+    })}
+  >
+    {t({
+      en: `Created and maintained Power BI dashboards for operational and
+financial metrics, optimised ETL pipelines, and built statistical
+models with Python and R to forecast production indicators.`,
+      pt: `Criação e manutenção de dashboards em Power BI para métricas operacionais
+e financeiras, otimização de fluxos ETL e construção de modelos
+estatísticos com Python e R para prever indicadores de produção.`,
+    })}
+  </TimeLineElement>
+
+  {/* IMxr */}
+  <TimeLineElement
+    title={t({
+      en: "VR Software Developer",
+      pt: "Desenvolvedor de Software VR",
+    })}
+    subtitle={t({
+      en: "From 07/2022 to 02/2024 at IMxr, Belo Horizonte, Brazil",
+      pt: "De 07/2022 a 02/2024 na IMxr, Belo Horizonte, Brasil",
+    })}
+  >
+    {t({
+      en: `Developed Virtual Reality experiences with Unreal Engine + C++
+for the real-estate market, managed client-journey databases using
+Python, MongoDB and PostgreSQL, and built interactive BI
+dashboards in Looker Studio and Power BI to support strategic
+decisions.`,
+      pt: `Desenvolvimento de experiências de Realidade Virtual com
+Unreal Engine + C++ para o mercado imobiliário, gerenciamento de
+bancos de dados da jornada do cliente usando Python, MongoDB e
+PostgreSQL, além da criação de dashboards interativos em Looker
+Studio e Power BI para apoiar decisões estratégicas.`,
+    })}
+  </TimeLineElement>
+</div>
+
+
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">
+      {t({ en: "Education", pt: "Educação" })}
+    </div>
+  </div>
+
+  <div class="time-line-container grid gap-4 mb-10">
+    <TimeLineElement
+      title={t({ en: "Computer Science", pt: "Ciência da Computação" })}
+      subtitle={t({
+        en: "2020 to 2025 (graduation) at PUC-MG, Belo Horizonte, Brazil",
+        pt: "2020 a 2025 (graduação) na PUC-MG, Belo Horizonte, Brasil",
+      })}
+    />
+    <TimeLineElement
+      title={t({ en: "Exchange program", pt: "Intercâmbio" })}
+      subtitle={t({
+        en: "From April to July 2019, English immersion in Canada, in the cities of Montreal and Toronto",
+        pt: "Abril a Julho de 2019, imersão de inglês no Canadá nas cidades de Montreal E Toronto",
+      })}
+    />
+    <TimeLineElement
+      title={t({ en: "High School", pt: "Ensino Médio" })}
+      subtitle={t({
+        en: "2016 to 2018 at Colégio Genoma, Governador Valadares, Brazil",
+        pt: "2016 a 2018 no Colégio Genoma, Governador Valadares, Brasil",
+      })}
+    />
+  </div>
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">
+      {t({ en: "Certifications", pt: "Certificações" })}
+    </div>
+  </div>
+
+  <ul class="list-disc mx-6 mb-10 grid gap-2">
+    <li>
+      <a
+        href="#"
+        target="_blank"
+      >
+        {
+          t({
+            en: `Cloud Services Practices using Swift with an emphasis on Cognitive Services (100h) 04/2023`,
+            pt: `Práticas de Cloud Services usando Swift com ênfase em Serviços Cognitivos (100h) 04/2023`,
+          })
+        }
+      </a>
+    </li>
+    <li>
+      <a
+        href="#"
+        target="_blank"
+      >
+        {
+          t({
+            en: `Concepts and Fundamentals: Algorithms, OOP with Swift, JavaScript, and RESTful APIs (60h) 02/2023`,
+            pt: `Conceitos e Fundamentos: Algoritmos, POO com Swift, JavaScript e RESTful APIs (60h) 02/2023`,
+          })
+        }
+      </a>
+    </li>
+    <p>
+      {
+        t({
+          en: ` I have also completed various online courses and activities that do not have certification but have helped me gain knowledge in several areas of computing.`,
+          pt: ` Também realizei diversos cursos e atividades online que não possuem certificação, mas que me ajudaram a adquirir conhecimento em diversas áreas da computação.`,
+        })
+      }
+    </p>
+  </ul>
+
+
+</Layout>

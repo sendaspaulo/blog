@@ -1,0 +1,66 @@
+---
+title: "Mirrored Traveling Tournament Problem (mTTP) – Otimização do Calendário do Brasileirão"
+description: "Geração de tabelas espelhadas que minimizam distâncias percorridas, respeitando restrições competitivas"
+date: 2025-05-05
+cover: "mttp_cover.jpg"   # troque por um print do heat-map de distâncias ou diagrama do SA
+tags:
+  - Python
+  - Optimization
+  - Operations Research
+  - Sports Analytics
+  - Simulated Annealing
+---
+
+> Implementação em **Python** de um solucionador heurístico para o *Mirrored Traveling Tournament Problem* aplicado ao Campeonato Brasileiro Série A 2018. Repositório completo: [mTTP](https://github.com/sendaspaulo/mTTP).
+
+## 🎯 Objetivo
+
+Construir um calendário de 38 rodadas em formato espelhado (turno 1 ↔ turno 2) que:
+
+* minimiza a soma das distâncias de viagem dos 20 clubes;
+* limita a **máx. 2** jogos consecutivos em casa ou fora;
+* mantém uma única partida por time em cada rodada;
+* não repete confrontos em rodadas adjacentes.
+
+## 🔄 Pipeline
+
+1. **Dados de Entrada**  
+   `CBF_2018.csv` contém a tabela oficial com mandos e datas, além de coordenadas dos estádios (usadas na matriz de distâncias).
+
+2. **Gerador Inicial**  
+   `mTTP.py` cria um *round-robin* (turno 1) por algoritmo de círculo, espelha para o 2º turno e embaralha mandos mantendo restrições básicas.
+
+3. **Simulated Annealing**  
+   * Vizinho = troca de mandos ou permuta de rodadas.  
+   * Custo = Distância total + λ·Violações.  
+   * Resfriamento geométrico `T ← α·T` até `Tmin`, gravando melhor solução factível.
+
+4. **Pós-processamento**  
+   Solução final salva em `calendar_otimizado_max2.csv`.
+
+5. **Comparação**  
+   `comparador_calendarios.py` gera relatório (∆ km por time, histograma de sequências home/away) contrastando o calendário otimizado e o oficial da CBF.
+
+## 📊 Resultados
+
+| Métrica | Calendário CBF | Calendário mTTP | Redução |
+|---------|----------------|-----------------|---------|
+| Distância total (km) | 709 054 | **543 779** | **-23,3 %** |
+| Média por time (km) | 35 453 | **27 189** | -8 264 |
+| Máx. consecutivos casa/fora | 3 | **2** | – |
+
+*Redução de ~165 000 km sem quebrar restrições de competitividade.*
+
+## 🚀 Como Rodar
+
+```bash
+git clone https://github.com/sendaspaulo/mTTP.git
+cd mTTP
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt         # pandas, numpy, tqdm...
+
+# gerar calendário otimizado
+python mTTP.py --seed 42 --iter 50000 --alpha 0.95 --lambda 500
+
+# comparar com a tabela oficial
+python comparador_calendarios.py CBF_2018.csv calendar_otimizado_max2.csv

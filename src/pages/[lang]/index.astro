@@ -1,0 +1,137 @@
+---
+import { LOCALES, useTranslations, type Lang } from "@/i18n";
+import Layout from "@/layouts/Base.astro";
+const t = useTranslations(Astro.currentLocale as Lang);
+import { getRelativeLocaleUrl } from "astro:i18n";
+
+import Globe from "../../components/globe/Globe.astro";
+import Card2 from "@/components/card/v2/Card2.astro";
+
+import HorizontalCard from "@/components/card/HorizontalCard.astro";
+
+// import heroImageEn from "@/assets/en/hero.svg";
+// import heroImagePt from "@/assets/pt/hero.svg";
+// import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+
+const locale = Astro.currentLocale as Lang;
+
+export const getStaticPaths = () =>
+  Object.keys(LOCALES).map((lang) => ({
+    params: { lang },
+  }));
+
+const projects = (await getCollection("blog"))
+  .filter((post) => post.slug.split("/")[0] === locale)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+---
+
+<Layout>
+  <!-- <Image
+    src={locale === "pt" ? heroImagePt : heroImageEn}
+    alt={t({
+      en: "Hello",
+      pt: "Olá",
+    })}
+    loading="eager"
+  /> -->
+
+<p>
+  <em>
+    {
+      t({
+        en: "Welcome to my personal portfolio! I'm Paulo Henrique, a Computer Science student and sports data researcher. I’m currently interning at AFFEMG, where I work with BI and software development, and I’ve previously worked with VR and Data Science at IMxr.",
+        pt: "Bem-vindo ao meu portfólio pessoal! Sou Paulo Henrique, estudante de Ciência da Computação e pesquisador na área de dados esportivos. Atualmente, estagio na AFFEMG, atuando com BI e desenvolvimento de software. Anteriormente, atuei com realidade virtual e ciência de dados na IMxr.",
+      })
+    }
+  </em>
+</p>
+
+
+  <Card2
+    colSpan="md:col-span-1"
+    rowSpan="md:row-span-1"
+    title={t({
+      en: "Places I've visited",
+      pt: "Lugares que visitei",
+    })}
+    href="travel"
+  >
+    <div class="h-full w-full absolute inset-0 -z-10">
+      <Globe  />
+    </div>
+  </Card2>
+  <!-- <p>
+    {
+      t({
+        en: "Here, you will find details about my professional journey, educational background, skills, and the projects I've worked on. Feel free to explore and learn more about how I can help bring your ideas to life. Let's build something amazing together!",
+        pt: "Aqui, você encontrará detalhes sobre minha trajetória profissional, formação educacional, habilidades e os projetos nos quais trabalhei. Fique à vontade para explorar e saber mais sobre como posso ajudar a transformar suas ideias em realidade. Vamos construir algo incrível juntos!",
+      })
+    }
+  </p> -->
+
+  <!-- <p>
+    {
+      t({
+        en: "currently completing my degree in Computer Science",
+        pt: "atualmente me formando em Ciência da Computação",
+      })
+    }
+  </p> -->
+
+  <!-- <h2>
+    {
+      t({
+        en: "Some projects",
+        pt: "Alguns projetos",
+      })
+    }
+  </h2> -->
+
+  <div class="grid grid-cols-1 gap-4">
+    {
+      projects.map((post) => {
+        const [, ...slug] = post.slug.split("/");
+        return (
+          <HorizontalCard
+            title={post.data.title}
+            date={post.data.date}
+            img={post.data.cover}
+            slug={slug.join("/")}
+            desc={post.data.description}
+            href={`/${locale}/blog/${slug.join("/")}/`}
+            tags={post.data.tags}
+          />
+        );
+      })
+    }
+  </div>
+  <center>
+    <a
+      href={getRelativeLocaleUrl(locale, "blog")}
+      class="btn btn-primary mt-3"
+      transition:name={t({
+        en: "Projects",
+        pt: "Projetos",
+      })}
+    >
+      <span class="material-icons-sharp dir">arrow_forward</span>
+      {
+        t({
+          en: "All projects",
+          pt: "Todos os projetos",
+        })
+      }
+    </a>
+
+    <!-- <a
+      href="https://github.com/sendaspaulo"
+      target="_blank"
+      class="btn btn-primary mt-3"
+    >
+      <span class="material-icons-sharp dir">arrow_forward</span>
+      GitHub
+    </a> -->
+  </center>
+</Layout>

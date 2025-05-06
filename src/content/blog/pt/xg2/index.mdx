@@ -1,0 +1,72 @@
+---
+title: "Expected Goals (xG) – Interpretabilidade e Desempenho com XGBoost"
+description: "Pipeline completo, da coleta de eventos StatsBomb à explicação do XGBClassifier, avaliando métricas de calibração e curva ROC"
+date: 2025-05-05
+cover: "./xg_cover.jpg"   # substitua por um heat-map de xG ou diagrama do fluxo
+tags:
+  - Python
+  - Machine Learning
+  - Sports Analytics
+  - XGBoost
+  - Explainable AI
+---
+
+> Continuação e aprimoramento do projeto de *Expected Goals*: aqui exploramos **XGBClassifier**, calibramos previsões e tornamos o modelo interpretável com **SHAP**. O notebook completo está em `xG_2.ipynb` no repositório [xG-StatsBomb-Analysis](https://github.com/sendaspaulo/xG-StatsBomb-Analysis).
+
+## 🎯 Objetivo
+
+Refinar a estimativa de probabilidade de gol utilizando **XGBoost** e comprovar ganho de performance sobre abordagens clássicas, avaliando não só AUC mas também *Brier Score* e curva de calibração, além de explicar a contribuição de cada variável.
+
+## 🔄 Pipeline
+
+1. **Coleta & Limpeza**  
+   `data_ingest.py` baixa partidas da Premier League 2015-16 via *statsbombpy* e gera `events.parquet`.  
+
+2. **Feature Engineering**  
+   * Distância (**distance**) e ângulo (**angle**) do chute.  
+   * Flags contextuais: **shot_first_time**, **shot_one_on_one**, **shot_open_goal**.  
+   * Situação da jogada (bola rolando, pênalti, falta, cabeceio).  
+   * Minuto da partida e diferença de placar (**score_diff**).  
+
+3. **Modelagem**
+
+   | Modelo | Ferramenta | ROC AUC* | Brier* |
+   |--------|------------|---------:|-------:|
+   | Regressão Logística | scikit-learn | 0,73 | 0,38 |
+   | Random Forest       | scikit-learn | 0,79 | 0,34 |
+   | **XGBClassifier**   | xgboost      | **0,82** | **0,31** |
+
+   \* validação estratificada 70/30, média de 3 execuções.
+
+4. **Avaliação Avançada**  
+   * Curvas ROC e *Precision-Recall*.  
+   * *Calibration plots* (previsto × real).  
+   * *Brier Skill Score* comparando com xG oficial da StatsBomb.  
+
+5. **Interpretabilidade**  
+   `explain.py` gera:  
+   * Gráfico **SHAP Summary** destacando influência de **distance** e **angle**.  
+   * **Force plots** e **waterfall** para chutes específicos (ex.: final da UCL 2016).
+
+6. **Exportação & Deploy**  
+   `export_model.py` salva o booster `.json`; `app.py` expõe REST API (`/predict`) pronta para embutir em dashboards.
+
+## 💡 Resultados em Destaque
+
+* **XGBClassifier** reduziu *Brier Score* em 18 % versus regressão logística, indicando melhor calibração de probabilidade.  
+* Chutes de dentro da pequena área, com ângulo ≤ 30 °, apresentam xG médio ≥ 0,45.  
+* Cabeceios continuam com xG 40 % inferior aos chutes com o pé mesmo a curta distância.  
+* SHAP confirma que a interação **distance × angle** é o principal driver de xG.
+
+## 🚀 Como Rodar
+
+```bash
+git clone https://github.com/sendaspaulo/xG-StatsBomb-Analysis.git
+cd xG-StatsBomb-Analysis
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt         # statsbombpy, xgboost, shap...
+
+python data_ingest.py                  # baixa e processa dados
+python train.py --model xgb --epochs 100
+python explain.py                       # gera gráficos SHAP
+python app.py                           # API em localhost:5000/predict
