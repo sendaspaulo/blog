@@ -8,7 +8,7 @@ import tailwind from "@astrojs/tailwind";
 
 // https://astro.build/config
 export default defineConfig({
-  // site: "blogs-azure-three.vercel.app",
+  site: "https://blogs-git-main-paulo-sendas-projects.vercel.app/",
   integrations: [mdx(), sitemap(), tailwind()],
   i18n: {
     defaultLocale: "en",
